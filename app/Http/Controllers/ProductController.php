@@ -4,10 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Jobs\ImportProductImages;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index()
     {
         $products = Product::all();
@@ -30,12 +39,10 @@ class ProductController extends Controller
 
     public function searchByCategory($category)
     {
-        // Buscar produtos que pertencem à categoria
         $products = Product::whereHas('category', function ($query) use ($category) {
             $query->where('name', $category);
         })->get();
 
-        // Retornar a resposta JSON
         return response()->json($products);
     }
 
@@ -60,7 +67,6 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        // Validação dos campos do formulário
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
@@ -69,17 +75,14 @@ class ProductController extends Controller
             'image_url' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Processar o upload da imagem
         if ($request->hasFile('image_url')) {
             $imageName = time() . '.' . $request->image_url->extension();
             $request->image_url->move(public_path('images'), $imageName);
         }
 
-        // Recuperar o nome da categoria com base no ID
         $category = Category::find($request->category_id);
 
-        // Criar o produto e salvar no banco de dados
-        Product::create([
+        $product = Product::create([
             'name' => $request->input('name'),
             'price' => $request->input('price'),
             'description' => $request->input('description'),
@@ -88,8 +91,9 @@ class ProductController extends Controller
             'image_url' => 'images/' . $imageName,
         ]);
 
-        // Redirecionar com uma mensagem de sucesso
-        return redirect()->route('products.index')->with('success', 'Produto criado com sucesso!');
+        ImportProductImages::dispatch($product);
+
+        return redirect()->route('products.index')->with('success', 'Produto criado com sucesso e sua importação de imagens esta sendo processada!');
     }
 
     public function update(Request $request, Product $product)

@@ -8,13 +8,11 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // Exibe o formulário de registro
     public function create()
     {
         return view('users.create');
     }
 
-    // Processa o registro de um novo usuário
     public function store(Request $request)
     {
         $request->validate([
@@ -33,16 +31,14 @@ class UserController extends Controller
             'phone' => $request->phone,
         ]);
 
-        return redirect()->route('/')->with('success', 'User registered successfully.');
+        return redirect()->route('login')->with('success', 'User registered successfully.');
     }
 
-    // Exibe o formulário de edição de dados pessoais
     public function edit(User $user)
     {
         return view('users.edit', compact('user'));
     }
 
-    // Processa a atualização dos dados pessoais
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -54,6 +50,6 @@ class UserController extends Controller
 
         $user->update($request->all());
 
-        return redirect()->route('/')->with('success', 'User updated successfully.');
+        return redirect()->route('home')->with('success', 'User updated successfully.');
     }
 }

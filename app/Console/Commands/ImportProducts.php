@@ -20,7 +20,7 @@ class ImportProducts extends Command
     {
         $this->info('Importing products...');
 
-        $response = Http::get('https://fakestoreapi.com/products');
+        $response = Http::get(env('API_EXTERNAL_URL'));
         $products = $response->json();
 
         foreach ($products as $productData) {
@@ -32,6 +32,7 @@ class ImportProducts extends Command
                     'description' => $productData['description'],
                     'category' => $productData['category'],
                     'image_url' => $productData['image'],
+                    'category_id' => $productData['category_id'] ?? 0,
                 ]
             );
         }
