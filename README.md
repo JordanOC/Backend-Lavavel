@@ -1,4 +1,4 @@
-## Sistema de Gerenciamento de Usuários e Produtos em Laravel (PHP)
+## Libzz - Sistema de Gerenciamento de Produtos em Laravel (PHP)
 
 Este é um sistema básico desenvolvido em Laravel para gerenciamento de usuários e produtos. O sistema oferece funcionalidades de cadastro, edição e importação de produtos e importação de uma API externa, além da integração com filas de processamento de tarefas em segundo plano.
 
