@@ -6,9 +6,11 @@
             <li class="nav-item mb-2">
                 <a href="{{ route('adicionar.itens') }}" class="nav-link text-dark">Adicionar Produtos</a>
             </li>
-            <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-dark">Editar Categorias</a>
-            </li>
+            @auth
+                <li class="nav-item mb-2">
+                    <a href="{{ route('import.products') }}" class="nav-link text-dark">Importar Produtos - API Externa</a>
+                </li>
+            @endauth
         </ul>
         <hr>
         <ul class="nav flex-column mb-auto">

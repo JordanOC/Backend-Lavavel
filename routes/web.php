@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
-
+use App\Http\Controllers\ImportProductController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,13 +13,13 @@ Route::get('/', function () {
 
 Route::get('/home', [ProductController::class, 'index'])->name('home');
 
-Route::get('/adicionar-itens', [ProductController::class, 'create'])->name('adicionar.itens');
+Route::get('/adicionar-itens', [ProductController::class, 'create'])->name('adicionar.itens')->middleware('auth');
 
-Route::get('/products/list', [ProductController::class, 'index'])->name('products.list');
-Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-Route::resource('products', ProductController::class)->except(['show']);
-Route::get('/products/category/{category}', [ProductController::class, 'searchByCategory'])->name('products.category');
+Route::get('/products/list', [ProductController::class, 'index'])->name('products.list')->middleware('auth');
+Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update')->middleware('auth');
+Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy')->middleware('auth');
+Route::resource('products', ProductController::class)->except(['show'])->middleware('auth');
+Route::get('/products/category/{category}', [ProductController::class, 'searchByCategory'])->name('products.category')->middleware('auth');
 
 
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
@@ -47,4 +47,8 @@ Route::get('/test-queue', function () {
     return 'Job foi enviado para a fila!';
 });
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/import-products', [ImportProductController::class, 'import'])->name('import.products');
+});
 

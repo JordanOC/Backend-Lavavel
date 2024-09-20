@@ -25,17 +25,23 @@
             </div>
 
             <div class="row mt-3" id="product-list">
-                @foreach($products as $product)
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100">
-                            <img src="{{ asset($product->image_url) }}" class="card-img-top img-fluid" alt="{{ $product->name }}" style="max-height: 450px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text">R${{ $product->price }}</p>
+                @if($products->count() > 0)
+                    @foreach($products as $product)
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100">
+                                <img src="{{ asset($product->image_url) }}" class="card-img-top img-fluid" alt="{{ $product->name }}" style="max-height: 450px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $product->name }}</h5>
+                                    <p class="card-text">R${{ $product->price }}</p>
+                                </div>
                             </div>
                         </div>
+                    @endforeach
+                @else
+            <div class="d-flex flex-column justify-content-center align-items-center mb-6" style="height: 600px;">
+                        <h3 class="text-center">Você ainda não tem produtos, cadastre ou importe seu primeiro produto</h3>
                     </div>
-                @endforeach
+                @endif
             </div>
         </div>
     </div>
@@ -45,7 +51,7 @@
 
 document.querySelectorAll('.category-link').forEach(function(link) {
     link.addEventListener('click', function(e) {
-        e.preventDefault(); 
+        e.preventDefault();
         let category = this.getAttribute('data-category');
 
         fetch(`/products/category/${category}`)
