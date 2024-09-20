@@ -1,6 +1,31 @@
 version: "3"
 
 services:
+    app:
+        build: .
+        container_name: app-libzz
+        volumes:
+            - .:/var/www
+            - ./.docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+        networks:
+            - app-network
+        depends_on:
+            - db
+            - redis
+
+    nginx:
+        build: .docker/nginx
+        container_name: libzz-nginx
+        restart: always
+        tty: true
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www
+        networks:
+            - app-network
+        depends_on:
+            - app
     db:
         build: ./.docker/mysql
         container_name: db
@@ -24,6 +49,30 @@ services:
         - app-network
         ports:
         - "6379:6379"
+
+    # worker:
+    #     build:
+    #         context: .
+    #     command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    #     volumes:
+    #     - .:/var/www/html
+    #     networks:
+    #     - app-network
+    #     depends_on:
+    #     - redis
+
+    # localstack:
+    #     image: localstack/localstack
+    #     container_name: localstack
+    #     ports:
+    #     - "4566:4566"
+    #     - "4572:4572"
+    #     environment:
+    #     - SERVICES=s3,sqs,iam
+    #     - DEBUG=1
+    #     - DEFAULT_REGION=us-east-1
+    #     volumes:
+    #     - "./localstack-data:/tmp/localstack"
 
 networks:
     app-network:
